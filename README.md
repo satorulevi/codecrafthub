@@ -1,63 +1,41 @@
 CodeCraftHub
-CodeCraftHub is a beginner-friendly REST API for tracking personal learning goals and courses. It is built with Node.js and Express and stores course data in a local
-courses.json
-file instead of using a database.
+CodeCraftHub is a beginner-friendly REST API for tracking personal learning goals and courses. It is built with Node.js and Express and stores course data in a local courses.json file instead of using a database.
 
-The API runs on port
-5000
-.
-
+The API runs on port 5000.
 Features
-Create, view, update, and delete courses
-Automatically generated numeric course IDs
-Required course field validation
-Course status validation
-YYYY-MM-DD
-target date validation
-Automatically generated creation timestamps
-Automatic creation of
-courses.json
-JSON-based file storage
-Helpful HTTP error responses
-No authentication or user management
+- Create, view, update, and delete courses (CRUD).
+- Automatically generate numeric course IDs and creation timestamps.
+- Validate required course fields and allowed status values.
+- Validate target dates in YYYY-MM-DD format, including real calendar dates.
+- Automatically create courses.json if it does not exist.
+- Store data in a local JSON file without a database.
+- Return helpful HTTP error responses.
+- Run without authentication or user management.
 Technologies
-Node.js
-Express
-JSON file storage
+- Node.js
+- Express
+- JSON file storage
 Project Structure
 codecrafthub/
 ├── app.js
 ├── courses.json
 ├── package.json
+├── package-lock.json
+├── .gitignore
 └── README.md
-The
-courses.json
-file is created automatically when the application starts or receives its first request if it does not already exist.
-
+courses.json is created automatically when the application first needs it, if it does not already exist. The node_modules/ directory is created when you install dependencies and should not be committed to Git.
 Course Format
-Each course contains the following fields:
-
+Each course contains these fields:
 Field	Description
-id
-Automatically generated numeric ID
-name
-Course name
-description
-Course description
-target_date
-Target completion date in
-YYYY-MM-DD
-format
-status
-Not Started
-,
-In Progress
-, or
-Completed
-created_at
-Automatically generated ISO timestamp
-Example course:
+id	Automatically generated numeric ID
+name	Course name (required)
+description	Course description (required)
+target_date	Target completion date in YYYY-MM-DD format (required)
+status	Not Started, In Progress, or Completed (required)
+created_at	Automatically generated ISO timestamp
 
+
+Example course:
 {
   "id": 1,
   "name": "Express.js Basics",
@@ -68,53 +46,46 @@ Example course:
 }
 Installation
 1. Install Node.js
-Download and install Node.js from:
+Download and install Node.js from nodejs.org.
 
-https://nodejs.org/
-Verify that Node.js and npm are installed:
-
+Open a terminal and verify that Node.js and npm are installed:
 node --version
 npm --version
-2. Clone or download the project
-Open a terminal in the project directory:
-
+2. Get the project
+Clone the GitHub repository:
+git clone https://github.com/satorulevi/codecrafthub.git
 cd codecrafthub
+If you have already downloaded or created the project, simply open its folder in VS Code and open a terminal there.
 3. Install dependencies
-Install Express using the existing
-package.json
-file:
-
 npm install
+This installs Express using the project's package.json file.
 Running the Application
-Start the server with:
-
+Start the server:
 npm start
-The API will be available at:
+The API will be available at http://localhost:5000.
 
-http://localhost:5000
 You should see a message similar to:
-
 CodeCraftHub API is running on http://localhost:5000
-The course data is stored in:
+Course data is stored in: /path/to/codecrafthub/courses.json
+To stop the server, press Ctrl + C in the terminal.
+Windows PowerShell note: If PowerShell blocks npm.ps1, try npm.cmd install and npm.cmd start, or use a Command Prompt terminal. The API examples below use curl; on Windows, use curl.exe in PowerShell.
 
-courses.json
-To stop the server, press:
-
-Ctrl + C
 API Documentation
-The base URL is:
+Base URL: http://localhost:5000
 
-http://localhost:5000
-All request bodies must use JSON and include the following header:
-
+For requests with a JSON body, include the header:
 Content-Type: application/json
-Create a Course
-Request
-POST /api/courses
-Example using
-curl
-:
+API Endpoints
+Method	Endpoint	Purpose
+POST	/api/courses	Create a course
+GET	/api/courses	Get all courses
+GET	/api/courses/:id	Get a course by ID
+PUT	/api/courses/:id	Update a course
+DELETE	/api/courses/:id	Delete a course
 
+
+1. Create a Course
+Request: POST /api/courses
 curl -X POST http://localhost:5000/api/courses \
   -H "Content-Type: application/json" \
   -d '{
@@ -123,23 +94,16 @@ curl -X POST http://localhost:5000/api/courses \
     "target_date": "2026-12-31",
     "status": "Not Started"
   }'
-Request Body
+Request body:
 {
   "name": "Express.js Basics",
   "description": "Learn how to build REST APIs with Express.",
   "target_date": "2026-12-31",
   "status": "Not Started"
 }
-The
-id
-and
-created_at
-fields are generated automatically.
+The id and created_at fields are generated automatically.
 
-Successful Response
-Status:
-201 Created
-
+Successful response: 201 Created
 {
   "id": 1,
   "name": "Express.js Basics",
@@ -148,29 +112,14 @@ Status:
   "status": "Not Started",
   "created_at": "2026-10-30T12:00:00.000Z"
 }
-Possible Errors
-Status:
-400 Bad Request
-
-{
-  "error": "The name field is required."
-}
-{
-  "error": "The status must be one of: Not Started, In Progress, Completed."
-}
-{
-  "error": "The target_date must use the format YYYY-MM-DD and be a valid date."
-}
-Get All Courses
-Request
-GET /api/courses
-Example:
-
+Possible errors: 400 Bad Request
+{ "error": "The name field is required." }
+{ "error": "The status must be one of: Not Started, In Progress, Completed." }
+{ "error": "The target_date must use the format YYYY-MM-DD and be a valid date." }
+2. Get All Courses
+Request: GET /api/courses
 curl http://localhost:5000/api/courses
-Successful Response
-Status:
-200 OK
-
+Successful response: 200 OK
 [
   {
     "id": 1,
@@ -190,22 +139,13 @@ Status:
   }
 ]
 If there are no courses, the response is an empty array:
-
 []
-Get a Specific Course
-Request
-GET /api/courses/:id
-Replace
-:id
-with the numeric course ID.
+3. Get a Specific Course
+Request: GET /api/courses/:id
 
-Example:
-
+Replace :id with the numeric course ID.
 curl http://localhost:5000/api/courses/1
-Successful Response
-Status:
-200 OK
-
+Successful response: 200 OK
 {
   "id": 1,
   "name": "Express.js Basics",
@@ -214,28 +154,12 @@ Status:
   "status": "Not Started",
   "created_at": "2026-10-30T12:00:00.000Z"
 }
-Course Not Found
-Status:
-404 Not Found
+Course not found: 404 Not Found
+{ "error": "Course not found." }
+4. Update a Course
+Request: PUT /api/courses/:id
 
-{
-  "error": "Course not found."
-}
-Update a Course
-The
-PUT
-endpoint replaces the editable course information. All required fields must be included in the request.
-
-The existing
-id
-and
-created_at
-values are preserved.
-
-Request
-PUT /api/courses/:id
-Example:
-
+The PUT endpoint replaces the editable course information. All required fields must be included in the request. The existing id and created_at values are preserved.
 curl -X PUT http://localhost:5000/api/courses/1 \
   -H "Content-Type: application/json" \
   -d '{
@@ -244,17 +168,14 @@ curl -X PUT http://localhost:5000/api/courses/1 \
     "target_date": "2027-01-31",
     "status": "In Progress"
   }'
-Request Body
+Request body:
 {
   "name": "Advanced Express.js",
   "description": "Build more advanced REST APIs with Express.",
   "target_date": "2027-01-31",
   "status": "In Progress"
 }
-Successful Response
-Status:
-200 OK
-
+Successful response: 200 OK
 {
   "id": 1,
   "name": "Advanced Express.js",
@@ -263,29 +184,13 @@ Status:
   "status": "In Progress",
   "created_at": "2026-10-30T12:00:00.000Z"
 }
-Possible Errors
-Status:
-400 Bad Request
-
-{
-  "error": "The description field is required."
-}
-Status:
-404 Not Found
-
-{
-  "error": "Course not found."
-}
-Delete a Course
-Request
-DELETE /api/courses/:id
-Example:
-
+Possible errors:
+- 400 Bad Request — { "error": "The description field is required." }
+- 404 Not Found — { "error": "Course not found." }
+5. Delete a Course
+Request: DELETE /api/courses/:id
 curl -X DELETE http://localhost:5000/api/courses/1
-Successful Response
-Status:
-200 OK
-
+Successful response: 200 OK
 {
   "message": "Course deleted successfully.",
   "course": {
@@ -297,155 +202,72 @@ Status:
     "created_at": "2026-10-30T12:00:00.000Z"
   }
 }
-Course Not Found
-Status:
-404 Not Found
-
-{
-  "error": "Course not found."
-}
+Course not found: 404 Not Found
+{ "error": "Course not found." }
+Validation Rules
 Valid Status Values
-The
-status
-field must contain exactly one of these values:
-
-Not Started
-In Progress
-Completed
-Examples:
-
-{
-  "status": "Not Started"
-}
-{
-  "status": "In Progress"
-}
-{
-  "status": "Completed"
-}
+The status field must contain exactly one of these values:
+- Not Started
+- In Progress
+- Completed
+For example:
+{ "status": "In Progress" }
 Valid Target Dates
-The
-target_date
-field must use the
-YYYY-MM-DD
-format.
+The target_date field must use YYYY-MM-DD format and represent a real calendar date.
 
-Valid example:
+Valid: 2026-12-31
 
-2026-12-31
-Invalid examples:
-
-12/31/2026
-2026-12-1
-December 31, 2026
-The application also checks whether the date is a real calendar date.
-
+Invalid: 12/31/2026, 2026-12-1, December 31, 2026, 2026-02-30
 Error Responses
-Invalid JSON
-If a request contains malformed JSON, the API returns:
+Condition	HTTP status	Example response
+Missing or invalid required field	400	{ "error": "The name field is required." }
+Malformed JSON request body	400	{ "error": "The request body contains invalid JSON." }
+Course does not exist	404	{ "error": "Course not found." }
+Unknown route	404	{ "error": "Route not found." }
+File read failure	500	{ "error": "Unable to read courses.json." }
+File write failure	500	{ "error": "Unable to write to courses.json." }
 
-Status:
-400 Bad Request
 
-{
-  "error": "The request body contains invalid JSON."
-}
-Unknown Route
-If an endpoint does not exist, the API returns:
-
-Status:
-404 Not Found
-
-{
-  "error": "Route not found."
-}
-File Read or Write Error
-If the application cannot read or write
-courses.json
-, it returns an error such as:
-
-Status:
-500 Internal Server Error
-
-{
-  "error": "Unable to read courses.json."
-}
-or:
-
-{
-  "error": "Unable to write to courses.json."
-}
 Troubleshooting
-npm: command not found
-Node.js and npm may not be installed. Install Node.js from:
-
-https://nodejs.org/
-Then verify the installation:
-
+node or npm: command not found
+Install Node.js from nodejs.org and reopen your terminal. Verify the installation:
 node --version
 npm --version
+PowerShell blocks npm.ps1
+In PowerShell, run the Windows command shim directly:
+npm.cmd install
+npm.cmd start
+Alternatively, open a Command Prompt terminal in VS Code.
 Cannot find module 'express'
-Install the project dependencies:
-
+Install the project dependencies and restart the application:
 npm install
-Then start the application again:
-
 npm start
 Port 5000 is already in use
-Another application may already be using port
-5000
-.
+Another application may already be using port 5000.
 
-On macOS or Linux, find the process using the port:
-
-lsof -i :5000
-On Windows, use:
-
+On Windows:
 netstat -ano | findstr :5000
-Stop the other application, then run:
-
-npm start
-The current application is configured to use port
-5000
-.
-
-courses.json
-contains invalid JSON
-The application expects
-courses.json
-to contain a JSON array.
-
-A valid empty file looks like this:
-
+On macOS or Linux:
+lsof -i :5000
+Identify and stop the conflicting process, then run npm start again. The application is configured to use port 5000.
+courses.json contains invalid JSON
+The file must contain a JSON array. A valid empty file looks like:
 []
-If the file contains invalid data, replace its contents with:
-
-[]
-Be aware that this removes the courses currently stored in the file.
-
+If you replace the file contents with [], all previously stored courses will be lost. Back up the file first if you want to keep its data.
 Course data is not being saved
-Check the following:
-
-Confirm that
-courses.json
-exists or can be created.
-Make sure the application has permission to write to the project directory.
-Check the terminal for file read or write error messages.
-Make sure
-courses.json
-contains valid JSON.
-A request returns “Course not found”
-Check that:
-
-The course ID exists.
-The ID is numeric.
-You are using the correct URL.
-Example:
-
+- Confirm that courses.json exists or can be created.
+- Make sure the application has permission to write to the project directory.
+- Check the terminal for file read or write error messages.
+- Make sure courses.json contains valid JSON.
+A request returns Course not found
+- Check that the course ID exists and is numeric.
+- Confirm that you are using the correct URL.
 curl http://localhost:5000/api/courses/1
 Important Notes
-This project uses a local JSON file instead of a database.
-The API does not include authentication or user management.
-All users would share the same course data if the API were deployed.
-The JSON file is intended for learning and small local projects, not high-traffic production use.
-23.00 seconds
+- This project uses a local JSON file instead of a database.
+- The API does not include authentication or user management.
+- If deployed, all users would share the same course data.
+- JSON file storage is intended for learning and small local projects, not high-traffic production use.
+- The curl examples above use Bash/macOS/Linux quoting. In Windows PowerShell, use curl.exe with PowerShell-compatible escaping or Invoke-RestMethod instead.
+Project Repository
+View CodeCraftHub on GitHub
